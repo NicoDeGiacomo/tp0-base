@@ -4,6 +4,8 @@
 
 ### Ejercicio N.º 1:
 
+#### Solución
+
 Para la solución se utiliza un script the Python y la biblioteca [Jinja](https://jinja.palletsprojects.com/en/stable/).
 La plantilla se encuentra en `templates/docker-compose-dev.yaml.jinja`
 
@@ -16,6 +18,6 @@ Se puede utilizar el generador de la siguiente manera:
 ./generar-compose.sh <output_file> <n_clients>
 ```
 
-### Ejercicio N.º 2:
+#### Tests
 
-...
+![img.png](.assets/img.png)
