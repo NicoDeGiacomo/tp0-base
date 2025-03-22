@@ -15,3 +15,7 @@ Se puede utilizar el generador de la siguiente manera:
 ```
 ./generar-compose.sh <output_file> <n_clients>
 ```
+
+### Ejercicio N.º 2:
+
+...
