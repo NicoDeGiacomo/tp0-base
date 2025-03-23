@@ -39,3 +39,28 @@ Se realizaron los siguientes cambios.
 #### Tests
 
 ![img.png](.assets/ej2-tests.png)
+
+### Ejercicio N.º 3:
+
+#### Solución
+
+Ya se dispone de un network configurado en el yaml del docker compose. Este network se llama "tp0_testing_net". Se
+puede verificar con el comando `docker network ls`.
+
+Para no utilizar Netcat dentro del host, se busca por ejecutar la prueba en un contenedor temporal basado en la imagen
+de [busybox](https://hub.docker.com/_/busybox).
+
+La validación del servidor puede realizarse de la siguiente manera.
+
+```bash
+docker run --rm --network="tp0_testing_net" busybox sh -c "echo 'custom message' | nc server 12345"
+```
+
+Este comando envìa un mensaje al puerto 12345 del servidor.
+
+Para automatizar esta validación, se crea el archivo `validar-echo-server.sh` que ejecuta dicho comando y verifica que
+se reciba la respuesta adecuada.
+
+#### Tests
+
+...
