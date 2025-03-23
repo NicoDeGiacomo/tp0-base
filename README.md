@@ -26,7 +26,15 @@ Se puede utilizar el generador de la siguiente manera:
 
 #### Solución
 
-...
+Se realizaron los siguientes cambios.
+
+- Se modifica la plantilla utilizada para generar el yaml para el _docker compose_ (
+  `templates/docker-compose-dev.yaml.jinja`).
+    - Se agregan _docker volumes_ de tipo [Bind Mounts](https://docs.docker.com/engine/storage/bind-mounts/).
+    - Se remueve, del environment, la configuración del nivel de logs.
+- Se modifica el _client Dockerfile_, eliminando el `COPY` del archivo de configuración.
+- Se modifica el Makefile, removiendo el `flag --build` de `docker-compose-up` para no forzar el _rebuild_ de las
+  imágenes.
 
 #### Tests
 
