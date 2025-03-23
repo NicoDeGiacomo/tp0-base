@@ -21,3 +21,13 @@ Se puede utilizar el generador de la siguiente manera:
 #### Tests
 
 ![img.png](.assets/img.png)
+
+### Ejercicio N.º 2:
+
+#### Solución
+
+...
+
+#### Tests
+
+...
