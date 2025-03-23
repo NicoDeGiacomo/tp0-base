@@ -20,7 +20,7 @@ Se puede utilizar el generador de la siguiente manera:
 
 #### Tests
 
-![img.png](.assets/img.png)
+![img.png](.assets/ej1-tests.png)
 
 ### Ejercicio N.º 2:
 
@@ -38,4 +38,4 @@ Se realizaron los siguientes cambios.
 
 #### Tests
 
-...
+![img.png](.assets/ej2-tests.png)
