@@ -63,4 +63,4 @@ se reciba la respuesta adecuada.
 
 #### Tests
 
-...
+![img.png](.assets/ej3.png)
