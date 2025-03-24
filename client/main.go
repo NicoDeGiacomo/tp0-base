@@ -113,7 +113,7 @@ func main() {
 	}
 
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGTERM)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 
 	log.Info("help")
 	client := common.NewClient(clientConfig)
