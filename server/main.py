@@ -50,6 +50,7 @@ def main():
     # Initialize server and start server loop
     server = Server(port, listen_backlog)
     server.run()
+    logging.shutdown()
 
 def initialize_log(logging_level):
     """

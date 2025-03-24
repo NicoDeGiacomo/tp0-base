@@ -64,3 +64,14 @@ se reciba la respuesta adecuada.
 #### Tests
 
 ![img.png](.assets/ej3-tests.png)
+
+### Ejercicio N.º 4:
+
+#### Solución
+
+- logging.shutdown() en el main
+- __handle_signal_sigterm y self._running en el server
+
+#### Tests
+
+...
