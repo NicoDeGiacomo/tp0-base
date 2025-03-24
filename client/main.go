@@ -121,5 +121,6 @@ func main() {
 	go func() {
 		_ = <-c
 		client.Shutdown()
+		fmt.Print("SHUTTING DOWN")
 	}()
 }
