@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"syscall"
 	"time"
 
 	"github.com/op/go-logging"
@@ -21,9 +22,8 @@ type ClientConfig struct {
 
 // Client Entity that encapsulates how
 type Client struct {
-	config  ClientConfig
-	conn    net.Conn
-	running bool
+	config ClientConfig
+	conn   net.Conn
 }
 
 // NewClient Initializes a new client receiving the configuration
@@ -48,7 +48,6 @@ func (c *Client) createClientSocket() error {
 		)
 	}
 	c.conn = conn
-	c.running = true
 	return nil
 }
 
@@ -56,7 +55,7 @@ func (c *Client) createClientSocket() error {
 func (c *Client) StartClientLoop() {
 	// There is an autoincremental msgID to identify every message sent
 	// Messages if the message amount threshold has not been surpassed
-	for msgID := 1; msgID <= c.config.LoopAmount && c.running; msgID++ {
+	for msgID := 1; msgID <= c.config.LoopAmount; msgID++ {
 		// Create the connection the server in every loop iteration. Send an
 		c.createClientSocket()
 
@@ -92,5 +91,6 @@ func (c *Client) StartClientLoop() {
 
 func (c *Client) Shutdown() {
 	c.conn.Close()
-	c.running = false
+	// c.running = false
+	syscall.Exit(0)
 }

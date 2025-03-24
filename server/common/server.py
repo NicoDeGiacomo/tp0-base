@@ -65,3 +65,4 @@ class Server:
     def __handle_signal_sigterm(self, signum, frame):
         self._running = False
         # self.shutdown()
+        # exit(0)
