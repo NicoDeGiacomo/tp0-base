@@ -7,6 +7,7 @@ class Server:
     def __init__(self, port, listen_backlog):
         # Initialize server socket
         self._server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        signal.signal(signal.SIGTERM, self.__handle_signal_sigterm)
         self._server_socket.bind(('', port))
         self._server_socket.listen(listen_backlog)
         self._running = True
@@ -19,7 +20,6 @@ class Server:
         communication with a client. After client with communucation
         finishes, servers starts to accept new connections again
         """
-        signal.signal(signal.SIGTERM, self.__handle_signal_sigterm)
         while self._running:
             client_sock = self.__accept_new_connection()
             self.__handle_client_connection(client_sock)
