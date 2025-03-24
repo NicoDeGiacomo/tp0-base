@@ -115,13 +115,13 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGTERM)
 
-	fmt.Print("HELP")
+	log.Info("help")
 	client := common.NewClient(clientConfig)
 	client.StartClientLoop()
 
 	go func() {
 		_ = <-c
 		client.Shutdown()
-		fmt.Print("SHUTTING DOWN")
+		log.Info("shutting down")
 	}()
 }
