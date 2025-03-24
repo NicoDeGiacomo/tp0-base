@@ -23,7 +23,6 @@ class Server:
         while self._running:
             client_sock = self.__accept_new_connection()
             self.__handle_client_connection(client_sock)
-        self.shutdown()
 
     def shutdown(self):
         self._server_socket.shutdown(socket.SHUT_RDWR)
@@ -64,3 +63,4 @@ class Server:
 
     def __handle_signal_sigterm(self, signum, frame):
         self._running = False
+        self.shutdown()
