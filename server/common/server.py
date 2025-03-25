@@ -28,8 +28,10 @@ class Server:
         if self._server_socket:
             self._server_socket.shutdown(socket.SHUT_RDWR)
             self._server_socket.close()
+            logging.info('action: shutdown_server_socket | result: success')
         if self._client_sock:
             self._client_sock.close()
+            logging.info('action: shutdown_client_socket | result: success')
 
     def __handle_client_connection(self):
         """
@@ -65,5 +67,6 @@ class Server:
         return c
 
     def __handle_signal_sigterm(self, signum, frame):
+        logging.info('action: signal_received | result: in_progress')
         self.shutdown()
         exit(0)
