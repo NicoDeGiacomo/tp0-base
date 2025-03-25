@@ -73,12 +73,26 @@ En el server y en el client se agrega una función para manejar la finalización
 SIGTERM
 
 En el server se liberan los siguientes recursos.
+
 - Server Socket
 - Client Socket
 
 En el client se liberan los siguientes recursos.
+
 - Socket
 
 #### Tests
 
 ![img.png](.assets/ej4-tests.png)
+
+## Parte 1: Introducción a Docker
+
+### Ejercicio N.º 1:
+
+#### Solución
+
+...
+
+#### Tests
+
+...
