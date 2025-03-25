@@ -69,8 +69,15 @@ se reciba la respuesta adecuada.
 
 #### Solución
 
-- logging.shutdown() en el main
-- __handle_signal_sigterm y self._running en el server
+En el server y en el client se agrega una función para manejar la finalización del proceso cuando se recibe una señal
+SIGTERM
+
+En el server se liberan los siguientes recursos.
+- Server Socket
+- Client Socket
+
+En el client se liberan los siguientes recursos.
+- Socket
 
 #### Tests
 
