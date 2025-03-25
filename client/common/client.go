@@ -61,7 +61,6 @@ func (c *Client) StartClientLoop() {
 
 	go func() {
 		<-s
-		log.Infof("action: receive_signal | client_id: %v", c.config.ID)
 		if c.conn != nil {
 			c.conn.Close()
 		}
