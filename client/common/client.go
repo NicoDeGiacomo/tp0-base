@@ -56,7 +56,7 @@ func (c *Client) createClientSocket() error {
 // StartClientLoop Send messages to the client until some time threshold is met
 func (c *Client) StartClientLoop() {
 	s := make(chan os.Signal, 1)
-	signal.Notify(s, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(s, syscall.SIGTERM)
 
 	go func() {
 		<-s
