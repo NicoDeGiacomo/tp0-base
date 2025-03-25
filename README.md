@@ -81,4 +81,4 @@ En el client se liberan los siguientes recursos.
 
 #### Tests
 
-...
+![img.png](.assets/ej4-tests.png)
