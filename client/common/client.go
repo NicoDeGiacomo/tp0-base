@@ -62,9 +62,7 @@ func (c *Client) StartClientLoop() {
 		log.Info("action: signal_received | result: in_progress")
 		if c.conn != nil {
 			err := c.conn.Close()
-			if err != nil {
-				log.Info("action: close_connection | result: failed")
-			} else {
+			if err == nil {
 				log.Info("action: close_connection | result: success")
 			}
 		}
