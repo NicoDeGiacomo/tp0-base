@@ -57,11 +57,16 @@ func (c *Client) createClientSocket() error {
 func (c *Client) StartClientLoop() {
 	s := make(chan os.Signal, 1)
 	signal.Notify(s, syscall.SIGTERM)
-
 	go func() {
 		<-s
+		log.Info("action: signal_received | result: in_progress")
 		if c.conn != nil {
-			c.conn.Close()
+			err := c.conn.Close()
+			if err != nil {
+				log.Info("action: close_connection | result: failed")
+			} else {
+				log.Info("action: close_connection | result: success")
+			}
 		}
 		os.Exit(0)
 	}()
