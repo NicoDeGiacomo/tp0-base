@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/op/go-logging"
@@ -112,16 +110,6 @@ func main() {
 		LoopPeriod:    v.GetDuration("loop.period"),
 	}
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-
-	log.Info("help")
 	client := common.NewClient(clientConfig)
 	client.StartClientLoop()
-
-	go func() {
-		_ = <-c
-		client.Shutdown()
-		log.Info("shutting down")
-	}()
 }
