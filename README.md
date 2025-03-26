@@ -69,14 +69,23 @@ se reciba la respuesta adecuada.
 
 #### Solución
 
+En el servidor, se realizan las siguientes modificaciones.
+
+- Se agregan métodos `__enter__` y `__exit__` en el objeto Server para manejar la creación y destrucción.
+- Desde el main se usa el objeto Server en un bloque `with`.
+- Se utiliza un handler para la señal SIGTERM que, mediante un flag, interrumpe el bucle principal.
+- Se agrega un timeout para que la llamada a `accept()` no sea bloqueante indefinidamente.
+
 En el server y en el client se agrega una función para manejar la finalización del proceso cuando se recibe una señal
 SIGTERM
 
 En el server se liberan los siguientes recursos.
+
 - Server Socket
 - Client Socket
 
 En el client se liberan los siguientes recursos.
+
 - Socket
 
 #### Tests
