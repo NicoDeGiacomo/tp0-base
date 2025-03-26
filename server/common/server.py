@@ -40,6 +40,7 @@ class Server:
             self._client_socket = self.__accept_new_connection()
             if self._client_socket:
                 self.__handle_client_connection()
+        logging.info('action: stop_run | result: success')
 
     def __handle_client_connection(self):
         """

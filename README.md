@@ -76,17 +76,9 @@ En el servidor, se realizan las siguientes modificaciones.
 - Se utiliza un handler para la señal SIGTERM que, mediante un flag, interrumpe el bucle principal.
 - Se agrega un timeout para que la llamada a `accept()` no sea bloqueante indefinidamente.
 
-En el server y en el client se agrega una función para manejar la finalización del proceso cuando se recibe una señal
-SIGTERM
+En el cliente, se realizan las siguientes modificaciones.
 
-En el server se liberan los siguientes recursos.
 
-- Server Socket
-- Client Socket
-
-En el client se liberan los siguientes recursos.
-
-- Socket
 
 #### Tests
 
