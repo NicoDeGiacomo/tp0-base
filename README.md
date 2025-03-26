@@ -69,17 +69,19 @@ se reciba la respuesta adecuada.
 
 #### Solución
 
-En el server y en el client se agrega una función para manejar la finalización del proceso cuando se recibe una señal
-SIGTERM
+En el servidor, se realizan las siguientes modificaciones.
 
-En el server se liberan los siguientes recursos.
+- Se agregan métodos `__enter__` y `__exit__` en el objeto Server para manejar la creación y destrucción.
+- Desde el main se usa el objeto Server en un bloque `with`.
+- Se utiliza un handler para la señal SIGTERM que, mediante un flag, interrumpe el bucle principal.
+- Se agrega un timeout para que la llamada a `accept()` no sea bloqueante indefinidamente.
+    - Cerrar el socket no es suficiente para interrumpir `accept()`.
+    - Este timeout debería que ser menor al tiempo de espera de `docker compose stop`.
 
-- Server Socket
-- Client Socket
+En el cliente, se realizan las siguientes modificaciones.
 
-En el client se liberan los siguientes recursos.
-
-- Socket
+- Se agrega el handler para la señal SIGTERM en la función NewClient que construye el objeto Client.
+- Se utiliza un flag para detener el bucle principal del cliente.
 
 #### Tests
 
