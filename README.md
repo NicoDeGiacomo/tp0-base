@@ -75,10 +75,13 @@ En el servidor, se realizan las siguientes modificaciones.
 - Desde el main se usa el objeto Server en un bloque `with`.
 - Se utiliza un handler para la señal SIGTERM que, mediante un flag, interrumpe el bucle principal.
 - Se agrega un timeout para que la llamada a `accept()` no sea bloqueante indefinidamente.
+    - Cerrar el socket no es suficiente para interrumpir `accept()`.
+    - Este timeout debería que ser menor al tiempo de espera de `docker compose stop`.
 
 En el cliente, se realizan las siguientes modificaciones.
 
-
+- Se agrega el handler para la señal SIGTERM en la función NewClient que construye el objeto Client.
+- Se utiliza un flag para detener el bucle principal del cliente.
 
 #### Tests
 
