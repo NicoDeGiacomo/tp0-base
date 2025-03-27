@@ -87,6 +87,7 @@ func (c *Client) StartClient() {
 			log.Errorf("action: create_socket | result: fail | error: %v", err)
 			return
 		}
+		defer c.conn.Close()
 
 		if betsLen == 0 {
 			err = protocol.SendFinalMessage(c.conn)
@@ -112,12 +113,6 @@ func (c *Client) StartClient() {
 			return
 		}
 
-		err = c.conn.Close()
-		if err != nil {
-			log.Errorf("action: close_socket | result: fail | error: %v", err)
-			return
-		}
-
 		log.Infof("action: apuesta_enviada | result: success | cantidad: %d | ultima: %d", betsLen, bets[betsLen-1].Number)
 	}
 
@@ -130,13 +125,18 @@ func (c *Client) StartClient() {
 }
 
 func (c *Client) CheckForWinners() {
+	if !c.running {
+		return
+	}
+
 	retries := 5
-	for retries > 0 {
+	for retries > 0 && c.running {
 		err := c.createClientSocket()
 		if err != nil {
 			log.Errorf("action: winners_create_socket | result: fail | error: %v", err)
 			return
 		}
+		defer c.conn.Close()
 
 		err = protocol.SendWinnersMessage(c.conn)
 		if err != nil {
@@ -150,12 +150,6 @@ func (c *Client) CheckForWinners() {
 			retries -= 1
 			time.Sleep(2 * time.Second)
 			continue
-		}
-
-		err = c.conn.Close()
-		if err != nil {
-			log.Errorf("action: winners_close_socket | result: fail | error: %v", err)
-			return
 		}
 
 		log.Infof("action: consulta_ganadores | result: success | cant_ganadores: %d | ganadores: %v", len(winners), winners)
