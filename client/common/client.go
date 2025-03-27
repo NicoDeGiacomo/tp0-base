@@ -56,7 +56,10 @@ func (c *Client) createClientSocket() error {
 }
 
 func (c *Client) StartClient(bet domain.Bet) {
-	//for c.running {
+	if !c.running {
+		return
+	}
+
 	err := c.createClientSocket()
 	if err != nil {
 		log.Errorf("action: create_socket | result: fail | error: %v", err)
@@ -88,7 +91,6 @@ func (c *Client) StartClient(bet domain.Bet) {
 	}
 
 	log.Infof("action: apuesta_enviada | result: success | dni: %d | numero: %d", bet.DocNumber, bet.Number)
-	//}
 
 	log.Infof("action: loop_finished | result: success")
 }
