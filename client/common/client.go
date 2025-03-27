@@ -56,39 +56,39 @@ func (c *Client) createClientSocket() error {
 }
 
 func (c *Client) StartClient(bet domain.Bet) {
-	for c.running {
-		err := c.createClientSocket()
-		if err != nil {
-			log.Errorf("action: create_socket | result: fail | error: %v", err)
-			return
-		}
-
-		message, err := protocol.BetToBytes(bet)
-		if err != nil {
-			log.Errorf("action: create_message | result: fail | error: %v", err)
-			return
-		}
-
-		err = sendMessage(c.conn, message)
-		if err != nil {
-			log.Errorf("action: send_message | result: fail | error: %v", err)
-			return
-		}
-
-		err = c.conn.Close()
-		if err != nil {
-			log.Errorf("action: close_socket | result: fail | error: %v", err)
-			return
-		}
-
-		err = readAck(c.conn, bet.Number)
-		if err != nil {
-			log.Errorf("action: receive_message | result: fail | error: %v", err)
-			return
-		}
-
-		log.Infof("action: apuesta_enviada | result: success | dni: %d | numero: %d", bet.DocNumber, bet.Number)
+	//for c.running {
+	err := c.createClientSocket()
+	if err != nil {
+		log.Errorf("action: create_socket | result: fail | error: %v", err)
+		return
 	}
+
+	message, err := protocol.BetToBytes(bet)
+	if err != nil {
+		log.Errorf("action: create_message | result: fail | error: %v", err)
+		return
+	}
+
+	err = sendMessage(c.conn, message)
+	if err != nil {
+		log.Errorf("action: send_message | result: fail | error: %v", err)
+		return
+	}
+
+	err = readAck(c.conn, bet.Number)
+	if err != nil {
+		log.Errorf("action: read_ack | result: fail | error: %v", err)
+		return
+	}
+
+	err = c.conn.Close()
+	if err != nil {
+		log.Errorf("action: close_socket | result: fail | error: %v", err)
+		return
+	}
+
+	log.Infof("action: apuesta_enviada | result: success | dni: %d | numero: %d", bet.DocNumber, bet.Number)
+	//}
 
 	log.Infof("action: loop_finished | result: success")
 }
