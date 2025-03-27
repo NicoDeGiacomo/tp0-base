@@ -47,6 +47,7 @@ class Server:
     def run(self):
         self._running = True
         while self._running:
+            self._processes = [process for process in self._processes if process.is_alive()]
             client_socket = self.__accept_new_connection()
             if client_socket:
                 process = multiprocessing.Process(
@@ -91,7 +92,8 @@ class Server:
                     winners = self._winners_cache.get(agency, [])
 
                     send_winners(client_socket, winners)
-                    logging.info(f'action: send_winners | result: success | agency: {agency} | winners: {winners} | ip: {client_ip}')
+                    logging.info(
+                        f'action: send_winners | result: success | agency: {agency} | winners: {winners} | ip: {client_ip}')
 
         except OSError as e:
             logging.error(f"action: apuesta_recibida | result: fail | error: {e}")
