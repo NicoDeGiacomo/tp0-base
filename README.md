@@ -126,6 +126,13 @@ transmiten los clientes.
 
 #### Solución
 
+El protocolo de comunicación sufrió las siguientes modificaciones.
+- Al comienzo de un batch de mensajes se envía la cantidad total de bytes del batch.
+- Si esa cantidad es cero, significa que no hay más apuestas para enviar.
+- El ACK por cada batch corresponde al último número de apuesta del batch.
+
+![img.png](.assets/ej6-protocol.png)
+
 Estimación del Max Batch Size por defecto.
 
 Se cuenta con el siguiente formato de mensaje:
@@ -152,4 +159,4 @@ Si se considera un tamaño máximo de 8kB (8192 bytes) para el batch de mensajes
 
 #### Tests
 
-...
+![img.png](.assets/ej6-tests.png)
