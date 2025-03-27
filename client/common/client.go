@@ -140,7 +140,6 @@ func (c *Client) CheckForWinners() {
 
 		err = protocol.SendWinnersMessage(c.conn)
 		if err != nil {
-			log.Errorf("action: send_winners_message | result: fail | error: %v", err)
 			retries -= 1
 			time.Sleep(2 * time.Second)
 			continue
@@ -148,7 +147,6 @@ func (c *Client) CheckForWinners() {
 
 		winners, err := protocol.ReadWinners(c.conn)
 		if err != nil {
-			log.Errorf("action: read_winners | result: fail | error: %v", err)
 			retries -= 1
 			time.Sleep(2 * time.Second)
 			continue
@@ -163,4 +161,6 @@ func (c *Client) CheckForWinners() {
 		log.Infof("action: consulta_ganadores | result: success | cant_ganadores: %d | ganadores: %v", len(winners), winners)
 		return
 	}
+
+	log.Errorf("action: read_winners | result: fail")
 }

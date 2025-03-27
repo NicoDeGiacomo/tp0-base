@@ -82,18 +82,19 @@ class Server:
                 logging.info(f'action: send_ack | result: success | numero: {bets[-1].number}')
 
             elif is_winners_message(message_type):
-                with self._lock:
-                    all_bets = load_bets()
+                if len(self._done_clients) >= self._n_clients:
+                    with self._lock:
+                        all_bets = load_bets()
 
-                winners = []
-                for bet in all_bets:
-                    if bet.agency != self._agency_per_client[client_ip]:
-                        continue
-                    if has_won(bet):
-                        winners.append(bet.document)
+                    winners = []
+                    for bet in all_bets:
+                        if bet.agency != self._agency_per_client[client_ip]:
+                            continue
+                        if has_won(bet):
+                            winners.append(bet.document)
 
-                send_winners(client_socket, winners)
-                logging.info(f'action: send_winners | result: success | winners: {winners}')
+                    send_winners(client_socket, winners)
+                    logging.info(f'action: send_winners | result: success | winners: {winners}')
 
         except OSError as e:
             logging.error(f"action: apuesta_recibida | result: fail | error: {e}")
