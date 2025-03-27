@@ -514,6 +514,8 @@ siguientes herramientas.
 - `multiprocessing.Manager`. Se utiliza para los diccionarios concurrentes que permiten la sincronización de los
   procesos. Por ejemplo, para saber cuando todos los clientes terminaron de enviar sus apuestas.
 - `multiprocessing.Process`. Se utiliza para crear los procesos.
+- `multiprocessing.Event`. Se utiliza para sincronizar cuando se terminó de realizar el cálculo de los ganadores y el
+  servidor está listo para responder consultas.
 
 #### Tests
 

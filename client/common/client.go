@@ -140,19 +140,21 @@ func (c *Client) CheckForWinners() {
 
 		err = protocol.SendWinnersMessage(c.conn)
 		if err != nil {
-			retries -= 1
+			retries--
 			time.Sleep(2 * time.Second)
 			continue
 		}
 
 		winners, err := protocol.ReadWinners(c.conn)
 		if err != nil {
-			retries -= 1
+			retries--
 			time.Sleep(2 * time.Second)
 			continue
 		}
 
-		log.Infof("action: consulta_ganadores | result: success | cant_ganadores: %d | ganadores: %v", len(winners), winners)
+		if c.running {
+			log.Infof("action: consulta_ganadores | result: success | cant_ganadores: %d | ganadores: %v", len(winners), winners)
+		}
 		return
 	}
 
