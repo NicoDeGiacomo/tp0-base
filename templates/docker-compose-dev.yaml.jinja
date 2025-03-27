@@ -25,7 +25,7 @@ services:
       - server
     volumes:
       - ./client/config.yaml:/config.yaml
-      - ./.data/dataset/agency-{{ i + 1 }}.csv:/data/agency-{{ i + 1 }}.csv
+      - ./.data/dataset/agency-{{ i + 1 }}.csv:/data/dataset/agency-{{ i + 1 }}.csv
 {% endfor %}
 
 networks:
