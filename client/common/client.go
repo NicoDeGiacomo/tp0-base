@@ -3,7 +3,6 @@ package common
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/7574-sistemas-distribuidos/docker-compose-init/client/domain"
 	"github.com/7574-sistemas-distribuidos/docker-compose-init/client/protocol"
 	"github.com/op/go-logging"
 	"io"
@@ -55,12 +54,27 @@ func (c *Client) createClientSocket() error {
 	return nil
 }
 
-func (c *Client) StartClient(bet domain.Bet) {
+func (c *Client) StartClient() {
 	if !c.running {
 		return
 	}
 
-	err := c.createClientSocket()
+	betsLoader, err := NewBetsLoader(c.config.ID)
+	if err != nil {
+		log.Errorf("action: create_bets_loader | result: fail | error: %v", err)
+		return
+	}
+	defer betsLoader.Close()
+
+	bets, err := betsLoader.NextChunk(1)
+	if err != nil {
+		log.Errorf("action: load_bets | result: fail | error: %v", err)
+		return
+	}
+
+	bet := bets[0]
+
+	err = c.createClientSocket()
 	if err != nil {
 		log.Errorf("action: create_socket | result: fail | error: %v", err)
 		return

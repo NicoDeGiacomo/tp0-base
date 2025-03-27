@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/7574-sistemas-distribuidos/docker-compose-init/client/domain"
 	"github.com/op/go-logging"
 	"github.com/spf13/viper"
 	"os"
@@ -102,15 +101,6 @@ func main() {
 		ID:            v.GetString("id"),
 	}
 
-	bet := domain.Bet{
-		Agency:    v.GetInt("ID"),
-		Name:      v.GetString("NOMBRE"),
-		Surname:   v.GetString("APELLIDO"),
-		DocNumber: v.GetInt("DOCUMENTO"),
-		BirthDate: v.GetString("NACIMIENTO"),
-		Number:    v.GetInt("NUMERO"),
-	}
-
 	client := common.NewClient(clientConfig)
-	client.StartClient(bet)
+	client.StartClient()
 }
