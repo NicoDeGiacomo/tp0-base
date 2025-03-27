@@ -1,13 +1,13 @@
-from server.common.utils import Bet
+from common.utils import Bet
 
 
 def read_bet(socket):
     l = __read_from_socket(socket, 2)
     message_size = (l[0] << 8) | l[1]
 
-    data = __read_from_socket(socket, message_size)
+    data = __read_from_socket(socket, message_size).decode("utf-8")
 
-    fields = "|".split(data)
+    fields = data.split("|")
     if len(fields) != 5:
         raise ValueError("Invalid bet received")
 

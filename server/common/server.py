@@ -2,8 +2,8 @@ import socket
 import logging
 import signal
 
-from server.common.utils import store_bets
-from server.protocol.protocol import read_bet, send_ack
+from common.utils import store_bets
+from protocol.protocol import read_bet, send_ack
 
 
 class Server:
@@ -46,7 +46,7 @@ class Server:
             logging.info(f'action: received_bet | result: success | bet: {bet}')
 
             store_bets([bet])
-            logging.info(f'action: apuesta_almacenada | result: success | dni: ${bet.document} | numero: ${bet.number}')
+            logging.info(f'action: apuesta_almacenada | result: success | dni: {bet.document} | numero: {bet.number}')
 
             send_ack(self._client_socket, bet)
 
