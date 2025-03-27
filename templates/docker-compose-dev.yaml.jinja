@@ -19,6 +19,11 @@ services:
     entrypoint: /client
     environment:
       - CLI_ID={{ i + 1 }}
+      - CLI_NOMBRE=nombre{{ i + 1 }}
+      - CLI_APELLIDO=apellido{{ i + 1 }}
+      - CLI_DOCUMENTO={{ i + 39000000 }}
+      - CLI_NACIMIENTO=1990-01-01
+      - CLI_NUMERO={{ 5000 + i }}
     networks:
       - testing_net
     depends_on:

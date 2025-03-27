@@ -2,6 +2,9 @@ import socket
 import logging
 import signal
 
+from server.common.utils import store_bets
+from server.protocol.protocol import read_bet, send_ack
+
 
 class Server:
     def __init__(self, port, listen_backlog):
@@ -28,13 +31,6 @@ class Server:
             logging.info('action: shutdown_client_socket | result: success')
 
     def run(self):
-        """
-        Dummy Server loop
-
-        Server that accept a new connections and establishes a
-        communication with a client. After client with communucation
-        finishes, servers starts to accept new connections again
-        """
         self._running = True
         while self._running:
             self._client_socket = self.__accept_new_connection()
@@ -43,39 +39,30 @@ class Server:
         logging.info('action: stop_run | result: success')
 
     def __handle_client_connection(self):
-        """
-        Read message from a specific client socket and closes the socket
-
-        If a problem arises in the communication with the client, the
-        client socket will also be closed
-        """
         logging.info('action: handle_connection | result: in_progress')
+
         try:
-            # TODO: Modify the receive to avoid short-reads
-            msg = self._client_socket.recv(1024).rstrip().decode('utf-8')
-            addr = self._client_socket.getpeername()
-            logging.info(f'action: receive_message | result: success | ip: {addr[0]} | msg: {msg}')
-            # TODO: Modify the send to avoid short-writes
-            self._client_socket.send("{}\n".format(msg).encode('utf-8'))
+            bet = read_bet(self._client_socket)
+            logging.info(f'action: received_bet | result: success | bet: {bet}')
+
+            store_bets([bet])
+            logging.info(f'action: apuesta_almacenada | result: success | dni: ${bet.document} | numero: ${bet.number}')
+
+            send_ack(self._client_socket, bet)
+
         except OSError as e:
-            logging.error("action: receive_message | result: fail | error: {e}")
+            logging.error(f"action: receive_message | result: fail | error: {e}")
+
         finally:
             self._client_socket.close()
 
     def __accept_new_connection(self):
-        """
-        Accept new connections
-
-        Function blocks until a connection to a client is made.
-        Then connection created is printed and returned
-        """
-
-        # Connection arrived
         try:
             logging.info('action: accept_connections | result: in_progress')
             c, addr = self._server_socket.accept()
             logging.info(f'action: accept_connections | result: success | ip: {addr[0]}')
             return c
+
         except socket.timeout:
             return None
 

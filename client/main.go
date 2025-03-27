@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/7574-sistemas-distribuidos/docker-compose-init/client/domain"
 	"os"
 	"strings"
 	"time"
@@ -37,6 +38,12 @@ func InitConfig() (*viper.Viper, error) {
 	v.BindEnv("loop", "period")
 	v.BindEnv("loop", "amount")
 	v.BindEnv("log", "level")
+
+	v.BindEnv("NOMBRE")
+	v.BindEnv("APELLIDO")
+	v.BindEnv("DOCUMENTO")
+	v.BindEnv("NACIMIENTO")
+	v.BindEnv("NUMERO")
 
 	// Try to read configuration from config file. If config file
 	// does not exists then ReadInConfig will fail but configuration
@@ -106,10 +113,16 @@ func main() {
 	clientConfig := common.ClientConfig{
 		ServerAddress: v.GetString("server.address"),
 		ID:            v.GetString("id"),
-		LoopAmount:    v.GetInt("loop.amount"),
-		LoopPeriod:    v.GetDuration("loop.period"),
+	}
+
+	bet := domain.Bet{
+		Name:      v.GetString("NOMBRE"),
+		Surname:   v.GetString("APELLIDO"),
+		DocNumber: v.GetInt("DOCUMENTO"),
+		BirthDate: v.GetString("NACIMIENTO"),
+		Number:    v.GetInt("NUMERO"),
 	}
 
 	client := common.NewClient(clientConfig)
-	client.StartClientLoop()
+	client.StartClient(bet)
 }
