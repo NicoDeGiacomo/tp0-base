@@ -112,7 +112,7 @@ func (c *Client) StartClient() {
 			return
 		}
 
-		log.Infof("action: apuesta_enviada | result: success | cantidad: %d", betsLen)
+		log.Infof("action: apuesta_enviada | result: success | cantidad: %d | ultima: %d", betsLen, bets[betsLen-1].Number)
 	}
 
 	log.Infof("action: loop_finished | result: success")
