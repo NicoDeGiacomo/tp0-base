@@ -191,3 +191,22 @@ los ganadores.
 #### Tests
 
 ![img.png](.assets/ej7-tests.png)
+
+## Parte 3: Repaso de Concurrencia
+
+### Ejercicio N.º 8:
+
+#### Solución
+
+Para la implementación del procesado de los mensajes en paralelo, se utiliza la biblioteca estándar de Python:
+multiprocessing. Esta nos permite crear procesos y ejecutarlos en paralelo, entre otras cosas. Hacemos uso de las
+siguientes herramientas.
+
+- `multiprocessing.Lock`. Se utiliza para sincronizar la lectura y escritura del archivo _bets.csv_.
+- `multiprocessing.Manager`. Se utiliza para los diccionarios concurrentes que permiten la sincronización de los
+  procesos. Por ejemplo, para saber cuando todos los clientes terminaron de enviar sus apuestas.
+- `multiprocessing.Process`. Se utiliza para crear los procesos.
+
+#### Tests
+
+![img.png](.assets/ej8-tests.png)
