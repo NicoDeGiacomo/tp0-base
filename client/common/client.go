@@ -49,7 +49,7 @@ func NewClient(config ClientConfig) *Client {
 func (c *Client) createClientSocket() error {
 	conn, err := net.Dial("tcp", c.config.ServerAddress)
 	if err != nil {
-		return fmt.Errorf("failed to connect to server")
+		return fmt.Errorf("failed to connect to server %s | %v", c.config.ServerAddress, err)
 	}
 	c.conn = conn
 	return nil
