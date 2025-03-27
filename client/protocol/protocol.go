@@ -23,6 +23,21 @@ func BetToBytes(bet domain.Bet) ([]byte, error) {
 	), nil
 }
 
+func BetsToBytes(bets []domain.Bet) ([]byte, error) {
+	var bytes []byte
+
+	for _, bet := range bets {
+		betBytes, err := BetToBytes(bet)
+		if err != nil {
+			return nil, err
+		}
+
+		bytes = append(bytes, betBytes...)
+	}
+
+	return bytes, nil
+}
+
 func CalculateMaxBatchSize(configMaxBatchSize int) int {
 	if configMaxBatchSize <= 0 || configMaxBatchSize > defaultMaxBatchSize {
 		return defaultMaxBatchSize

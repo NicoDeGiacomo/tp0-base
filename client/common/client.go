@@ -75,15 +75,13 @@ func (c *Client) StartClient() {
 		return
 	}
 
-	bet := bets[0]
-
 	err = c.createClientSocket()
 	if err != nil {
 		log.Errorf("action: create_socket | result: fail | error: %v", err)
 		return
 	}
 
-	message, err := protocol.BetToBytes(bet)
+	message, err := protocol.BetsToBytes(bets)
 	if err != nil {
 		log.Errorf("action: create_message | result: fail | error: %v", err)
 		return
@@ -95,7 +93,7 @@ func (c *Client) StartClient() {
 		return
 	}
 
-	err = readAck(c.conn, bet.Number)
+	err = readAck(c.conn, bets[len(bets)].Number)
 	if err != nil {
 		log.Errorf("action: read_ack | result: fail | error: %v", err)
 		return
@@ -107,7 +105,7 @@ func (c *Client) StartClient() {
 		return
 	}
 
-	log.Infof("action: apuesta_enviada | result: success | dni: %d | numero: %d", bet.DocNumber, bet.Number)
+	log.Infof("action: apuesta_enviada | result: success | cantidad: %d", len(bets))
 
 	log.Infof("action: loop_finished | result: success")
 }
