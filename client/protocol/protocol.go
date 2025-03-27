@@ -44,7 +44,7 @@ func BetsToBytes(bets []domain.Bet) ([]byte, error) {
 }
 
 func CalculateMaxBatchSize(configMaxBatchSize int) int {
-	if configMaxBatchSize <= 0 || configMaxBatchSize > defaultMaxBatchSize {
+	if configMaxBatchSize <= 0 {
 		return defaultMaxBatchSize
 	}
 	return configMaxBatchSize

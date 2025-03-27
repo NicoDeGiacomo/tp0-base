@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 var log = logging.MustGetLogger("log")
@@ -115,7 +116,9 @@ func (c *Client) StartClient() {
 		log.Infof("action: apuesta_enviada | result: success | cantidad: %d | ultima: %d", betsLen, bets[betsLen-1].Number)
 	}
 
-	log.Infof("action: loop_finished | result: success")
+	logging.Reset()
+	time.Sleep(10 * time.Second)
+	log.Infof("action: exit | result: success")
 }
 
 func sendMessage(conn net.Conn, message []byte) error {

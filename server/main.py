@@ -24,7 +24,8 @@ def initialize_config():
     config_params = {}
     try:
         config_params["port"] = int(os.getenv('SERVER_PORT', config["DEFAULT"]["SERVER_PORT"]))
-        config_params["listen_backlog"] = int(os.getenv('SERVER_LISTEN_BACKLOG', config["DEFAULT"]["SERVER_LISTEN_BACKLOG"]))
+        config_params["listen_backlog"] = int(
+            os.getenv('SERVER_LISTEN_BACKLOG', config["DEFAULT"]["SERVER_LISTEN_BACKLOG"]))
         config_params["logging_level"] = os.getenv('LOGGING_LEVEL', config["DEFAULT"]["LOGGING_LEVEL"])
     except KeyError as e:
         raise KeyError("Key was not found. Error: {} .Aborting server".format(e))
@@ -50,6 +51,8 @@ def main():
     # Initialize server and start server loop
     with Server(port, listen_backlog) as server:
         server.run()
+    logging.shutdown()
+
 
 def initialize_log(logging_level):
     """
