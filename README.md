@@ -507,8 +507,9 @@ los ganadores.
 #### Solución
 
 Para la implementación del procesado de los mensajes en paralelo, se utiliza la biblioteca estándar de Python:
-multiprocessing. Esta nos permite crear procesos y ejecutarlos en paralelo, entre otras cosas. Hacemos uso de las
-siguientes herramientas.
+multiprocessing. Esta nos permite crear procesos y ejecutarlos en paralelo, entre otras cosas.
+
+Hacemos uso de las siguientes herramientas.
 
 - `multiprocessing.Lock`. Se utiliza para sincronizar la lectura y escritura del archivo _bets.csv_.
 - `multiprocessing.Manager`. Se utiliza para los diccionarios concurrentes que permiten la sincronización de los
