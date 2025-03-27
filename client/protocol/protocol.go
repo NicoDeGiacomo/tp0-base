@@ -98,7 +98,7 @@ func ReadAck(conn net.Conn, expectedNumber int) error {
 }
 
 func ReadWinners(conn net.Conn) ([]string, error) {
-	err := conn.SetReadDeadline(time.Now().Add(1 * time.Second))
+	err := conn.SetReadDeadline(time.Now().Add(20 * time.Second))
 	if err != nil {
 		return nil, fmt.Errorf("failed to set timeout to read winners: %v", err)
 	}
