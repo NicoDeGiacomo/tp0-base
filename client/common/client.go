@@ -61,7 +61,6 @@ func (c *Client) StartClient() {
 	}
 
 	size := protocol.CalculateMaxBatchSize(c.config.BatchSize)
-
 	betsLoader, err := NewBetsLoader(c.config.ID)
 	if err != nil {
 		log.Errorf("action: create_bets_loader | result: fail | error: %v", err)
@@ -69,44 +68,52 @@ func (c *Client) StartClient() {
 	}
 	defer betsLoader.Close()
 
-	bets, err := betsLoader.NextChunk(size)
-	betsLen := len(bets)
-	if err != nil {
-		log.Errorf("action: load_bets | result: fail | error: %v", err)
-		return
-	}
+	for c.running {
+		bets, err := betsLoader.NextChunk(size)
+		if err != nil {
+			log.Errorf("action: load_bets | result: fail | error: %v", err)
+			return
+		}
+		betsLen := len(bets)
 
-	err = c.createClientSocket()
-	if err != nil {
-		log.Errorf("action: create_socket | result: fail | error: %v", err)
-		return
-	}
+		err = c.createClientSocket()
+		if err != nil {
+			log.Errorf("action: create_socket | result: fail | error: %v", err)
+			return
+		}
 
-	message, err := protocol.BetsToBytes(bets)
-	if err != nil {
-		log.Errorf("action: create_message | result: fail | error: %v", err)
-		return
-	}
+		if betsLen == 0 {
+			err = sendMessage(c.conn, []byte{0, 0})
+			log.Infof("action: done_sending_bets | result: success")
+			break
+		}
 
-	err = sendMessage(c.conn, message)
-	if err != nil {
-		log.Errorf("action: send_message | result: fail | error: %v", err)
-		return
-	}
+		message, err := protocol.BetsToBytes(bets)
+		if err != nil {
+			log.Errorf("action: create_message | result: fail | error: %v", err)
+			return
+		}
 
-	err = readAck(c.conn, bets[betsLen-1].Number)
-	if err != nil {
-		log.Errorf("action: read_ack | result: fail | error: %v", err)
-		return
-	}
+		err = sendMessage(c.conn, message)
+		if err != nil {
+			log.Errorf("action: send_message | result: fail | error: %v", err)
+			return
+		}
 
-	err = c.conn.Close()
-	if err != nil {
-		log.Errorf("action: close_socket | result: fail | error: %v", err)
-		return
-	}
+		err = readAck(c.conn, bets[betsLen-1].Number)
+		if err != nil {
+			log.Errorf("action: read_ack | result: fail | error: %v", err)
+			return
+		}
 
-	log.Infof("action: apuesta_enviada | result: success | cantidad: %d", betsLen)
+		err = c.conn.Close()
+		if err != nil {
+			log.Errorf("action: close_socket | result: fail | error: %v", err)
+			return
+		}
+
+		log.Infof("action: apuesta_enviada | result: success | cantidad: %d", betsLen)
+	}
 
 	log.Infof("action: loop_finished | result: success")
 }

@@ -94,7 +94,7 @@ func main() {
 	clientConfig := common.ClientConfig{
 		ServerAddress: v.GetString("server.address"),
 		ID:            v.GetString("id"),
-		BatchSize:     v.GetInt("batch.size"),
+		BatchSize:     v.GetInt("batch.maxAmount"),
 	}
 
 	client := common.NewClient(clientConfig)

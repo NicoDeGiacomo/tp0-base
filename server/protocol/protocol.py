@@ -13,6 +13,8 @@ def read_bet(socket):
 def read_bets_batch(socket):
     l = __read_from_socket(socket, 2)
     batch_size = (l[0] << 8) | l[1]
+    if batch_size == 0:
+        return []
 
     batch_data = __read_from_socket(socket, batch_size)
 

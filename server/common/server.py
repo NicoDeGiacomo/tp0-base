@@ -42,15 +42,19 @@ class Server:
         logging.info('action: handle_connection | result: in_progress')
 
         try:
-            bets = read_bets_batch(self._client_socket)
-            bets_size = len(bets)
-            logging.info(f'action: received_bet | result: success | size: {bets_size}')
+            while self._running:
+                bets = read_bets_batch(self._client_socket)
+                bets_size = len(bets)
+                if bets_size == 0:
+                    logging.info(f'action: no_more_batches | result: success')
+                    break
+                logging.info(f'action: received_bet | result: success | size: {bets_size}')
 
-            store_bets(bets)
-            logging.info(f'action: apuesta_recibida | result: success | cantidad: {bets_size}')
+                store_bets(bets)
+                logging.info(f'action: apuesta_recibida | result: success | cantidad: {bets_size}')
 
-            send_ack(self._client_socket, bets[-1])
-            logging.info(f'action: send_ack | result: success | numero: {bets[-1].number}')
+                send_ack(self._client_socket, bets[-1])
+                logging.info(f'action: send_ack | result: success | numero: {bets[-1].number}')
 
         except OSError as e:
             logging.error(f"action: apuesta_recibida | result: fail | error: {e}")
