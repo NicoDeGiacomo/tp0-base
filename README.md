@@ -167,8 +167,27 @@ Si se considera un tamaño máximo de 8kB (8192 bytes) para el batch de mensajes
 #### Solución
 
 La comunicación del final de carga por parte de los clientes ya fue implementada en el punto anterior. Para este punto,
-se modifica levemente el servidor para que entienda si finalizó la carga de todos los clientes.
+se modifica levemente el servidor para que entienda si finalizó la carga de todos los clientes que se esperan.
+
+Se modificó ligeramente el protocolo de comunicación para distinguir entre dos tipos de mensajes.
+
+- Si el mensaje comienza con `L`, indica que es un mensaje de carga.
+- Si el mensaje comienza con `W`, indica que es un mensaje de control de ganadores.
+
+![img.png](.assets/ej7-protocolo-1.png)
+
+El protocolo para la comunicación de los ganadores (mensaje enviado por el servidor) es el siguiente.
+
+```
+<largo mensaje><documento 1>|<documento 2>|<documento 3>
+```
+
+![img.png](.assets/ej7-protocolo-2.png)
+
+No se implementa un ACK para el control de ganadores, ya que el cliente se encarga de intentar (con una cantidad de
+reintentos definida) hasta obtener la respuesta. El servidor simplemente ignora el mensaje si aún no se pueden conocer
+los ganadores.
 
 #### Tests
 
-...
+![img.png](.assets/ej7-tests.png)
