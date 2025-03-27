@@ -32,6 +32,40 @@ def read_bets_batch(socket):
     return bets
 
 
+def send_ack(conn, bet):
+    bet_number = bet.number
+    ack = bytes([
+        (bet_number >> 24) & 0xFF,
+        (bet_number >> 16) & 0xFF,
+        (bet_number >> 8) & 0xFF,
+        bet_number & 0xFF
+    ])
+
+    conn.sendall(ack)
+
+def send_winners(conn, winners):
+    winners_str = "|".join(winners)
+
+    winners_bytes = winners_str.encode("utf-8")
+    winners_size = len(winners_bytes)
+
+    size = bytes([(winners_size >> 8) & 0xFF, winners_size & 0xFF])
+    conn.sendall(size + winners_bytes)
+
+
+def read_message_type(socket):
+    t = __read_from_socket(socket, 1)
+    return t.decode("utf-8")
+
+
+def is_load_message(message_type):
+    return message_type == 'L'
+
+
+def is_winners_message(message_type):
+    return message_type == 'W'
+
+
 def __read_from_socket(skt, size):
     data = b""
     while len(data) < size:
@@ -56,15 +90,3 @@ def __read_bet_from_string(data):
         birthdate=fields[4],
         number=fields[5],
     )
-
-
-def send_ack(conn, bet):
-    bet_number = bet.number
-    ack = bytes([
-        (bet_number >> 24) & 0xFF,
-        (bet_number >> 16) & 0xFF,
-        (bet_number >> 8) & 0xFF,
-        bet_number & 0xFF
-    ])
-
-    conn.sendall(ack)

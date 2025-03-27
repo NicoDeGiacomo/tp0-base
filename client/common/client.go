@@ -1,11 +1,9 @@
 package common
 
 import (
-	"encoding/binary"
 	"fmt"
 	"github.com/7574-sistemas-distribuidos/docker-compose-init/client/protocol"
 	"github.com/op/go-logging"
-	"io"
 	"net"
 	"os"
 	"os/signal"
@@ -84,7 +82,7 @@ func (c *Client) StartClient() {
 		}
 
 		if betsLen == 0 {
-			err = sendMessage(c.conn, []byte{0, 0})
+			err = protocol.SendFinalMessage(c.conn)
 			log.Infof("action: done_sending_bets | result: success")
 			break
 		}
@@ -95,13 +93,13 @@ func (c *Client) StartClient() {
 			return
 		}
 
-		err = sendMessage(c.conn, message)
+		err = protocol.SendLoadMessage(c.conn, message)
 		if err != nil {
 			log.Errorf("action: send_message | result: fail | error: %v", err)
 			return
 		}
 
-		err = readAck(c.conn, bets[betsLen-1].Number)
+		err = protocol.ReadAck(c.conn, bets[betsLen-1].Number)
 		if err != nil {
 			log.Errorf("action: read_ack | result: fail | error: %v", err)
 			return
@@ -116,37 +114,46 @@ func (c *Client) StartClient() {
 		log.Infof("action: apuesta_enviada | result: success | cantidad: %d | ultima: %d", betsLen, bets[betsLen-1].Number)
 	}
 
+	c.CheckForWinners()
+
 	logging.Reset()
 	time.Sleep(10 * time.Second)
+
 	log.Infof("action: exit | result: success")
 }
 
-func sendMessage(conn net.Conn, message []byte) error {
-	sent := 0
-
-	for sent < len(message) {
-		n, err := conn.Write(message[sent:])
+func (c *Client) CheckForWinners() {
+	retries := 5
+	for retries > 0 {
+		err := c.createClientSocket()
 		if err != nil {
-			return fmt.Errorf("failed to send message")
+			log.Errorf("action: winners_create_socket | result: fail | error: %v", err)
+			return
 		}
-		sent += n
+
+		err = protocol.SendWinnersMessage(c.conn)
+		if err != nil {
+			log.Errorf("action: send_winners_message | result: fail | error: %v", err)
+			retries -= 1
+			time.Sleep(2 * time.Second)
+			continue
+		}
+
+		winners, err := protocol.ReadWinners(c.conn)
+		if err != nil {
+			log.Errorf("action: read_winners | result: fail | error: %v", err)
+			retries -= 1
+			time.Sleep(2 * time.Second)
+			continue
+		}
+
+		err = c.conn.Close()
+		if err != nil {
+			log.Errorf("action: winners_close_socket | result: fail | error: %v", err)
+			return
+		}
+
+		log.Infof("action: consulta_ganadores | result: success | cant_ganadores: %d", len(winners))
+		return
 	}
-
-	return nil
-}
-
-func readAck(conn net.Conn, expectedNumber int) error {
-	ackBytes := make([]byte, 4)
-
-	_, err := io.ReadFull(conn, ackBytes)
-	if err != nil {
-		return fmt.Errorf("failed to read full ack: %v", err)
-	}
-
-	ack := binary.BigEndian.Uint32(ackBytes)
-	if int(ack) != expectedNumber {
-		return fmt.Errorf("ack number does not match")
-	}
-
-	return nil
 }

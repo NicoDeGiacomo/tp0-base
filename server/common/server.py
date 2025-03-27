@@ -2,8 +2,9 @@ import logging
 import signal
 import socket
 
-from common.utils import store_bets
-from protocol.protocol import send_ack, read_bets_batch
+from common.utils import store_bets, load_bets, has_won
+from protocol.protocol import send_ack, read_bets_batch, read_message_type, is_load_message, is_winners_message, \
+    send_winners
 
 
 class Server:
@@ -14,6 +15,7 @@ class Server:
         self._running = False
         self._n_clients = int(n_clients)
         self._done_clients = set()
+        self._agency_per_client = {}
 
     def __enter__(self):
         signal.signal(signal.SIGTERM, self.__handle_signal_sigterm)
@@ -35,9 +37,6 @@ class Server:
     def run(self):
         self._running = True
         while self._running:
-            if len(self._done_clients) >= self._n_clients:
-                logging.info('action: all_clients_done | result: success')
-                break
             self._client_socket = self.__accept_new_connection()
             if self._client_socket:
                 ip = self._client_socket.getpeername()[0]
@@ -48,19 +47,39 @@ class Server:
         logging.info('action: handle_connection | result: in_progress')
 
         try:
-            bets = read_bets_batch(self._client_socket)
-            bets_size = len(bets)
-            if bets_size == 0:
-                self._done_clients.add(client_ip)
-                logging.info(f'action: no_more_batches | result: success')
-                return
-            logging.info(f'action: batch_recibido | result: in_progress | cantidad: {bets_size}')
+            message_type = read_message_type(self._client_socket)
 
-            store_bets(bets)
-            logging.info(f'action: apuesta_recibida | result: success | cantidad: {bets_size}')
+            if is_load_message(message_type):
+                bets = read_bets_batch(self._client_socket)
+                bets_size = len(bets)
+                if bets_size == 0:
+                    self._done_clients.add(client_ip)
+                    logging.info(f'action: no_more_batches | result: success | ip: {client_ip}')
+                    if len(self._done_clients) >= self._n_clients:
+                        logging.info('action: all_clients_done | result: success')
+                    return
 
-            send_ack(self._client_socket, bets[-1])
-            logging.info(f'action: send_ack | result: success | numero: {bets[-1].number}')
+                logging.info(f'action: batch_recibido | result: in_progress | cantidad: {bets_size}')
+
+                self._agency_per_client[client_ip] = bets[0].agency
+
+                store_bets(bets)
+                logging.info(f'action: apuesta_recibida | result: success | cantidad: {bets_size}')
+
+                send_ack(self._client_socket, bets[-1])
+                logging.info(f'action: send_ack | result: success | numero: {bets[-1].number}')
+
+            elif is_winners_message(message_type):
+                all_bets = load_bets()
+
+                winners = []
+                for bet in all_bets:
+                    if bet.agency != self._agency_per_client[client_ip]:
+                        continue
+                    if has_won(bet):
+                        winners.append(bet.document)
+
+                send_winners(self._client_socket, winners)
 
         except OSError as e:
             logging.error(f"action: apuesta_recibida | result: fail | error: {e}")

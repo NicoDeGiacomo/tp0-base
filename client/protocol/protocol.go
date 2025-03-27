@@ -4,6 +4,10 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/7574-sistemas-distribuidos/docker-compose-init/client/domain"
+	"io"
+	"net"
+	"strings"
+	"time"
 )
 
 const defaultMaxBatchSize = 63
@@ -48,4 +52,69 @@ func CalculateMaxBatchSize(configMaxBatchSize int) int {
 		return defaultMaxBatchSize
 	}
 	return configMaxBatchSize
+}
+
+func SendFinalMessage(conn net.Conn) error {
+	return SendLoadMessage(conn, []byte{0, 0})
+}
+
+func SendLoadMessage(conn net.Conn, message []byte) error {
+	fullMessage := append([]byte{'L'}, message...)
+	return sendMessage(conn, fullMessage)
+}
+
+func SendWinnersMessage(conn net.Conn) error {
+	return sendMessage(conn, []byte{'W'})
+}
+
+func sendMessage(conn net.Conn, message []byte) error {
+	sent := 0
+
+	for sent < len(message) {
+		n, err := conn.Write(message[sent:])
+		if err != nil {
+			return fmt.Errorf("failed to send message")
+		}
+		sent += n
+	}
+
+	return nil
+}
+
+func ReadAck(conn net.Conn, expectedNumber int) error {
+	ackBytes := make([]byte, 4)
+
+	_, err := io.ReadFull(conn, ackBytes)
+	if err != nil {
+		return fmt.Errorf("failed to read full ack: %v", err)
+	}
+
+	ack := binary.BigEndian.Uint32(ackBytes)
+	if int(ack) != expectedNumber {
+		return fmt.Errorf("ack number does not match")
+	}
+
+	return nil
+}
+
+func ReadWinners(conn net.Conn) ([]string, error) {
+	err := conn.SetReadDeadline(time.Now().Add(1 * time.Second))
+	if err != nil {
+		return nil, fmt.Errorf("failed to set timeout to read winners: %v", err)
+	}
+
+	size := make([]byte, 2)
+	_, err = io.ReadFull(conn, size)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read winners size: %v", err)
+	}
+
+	winnersSize := int(binary.BigEndian.Uint16(size))
+	winnersData := make([]byte, winnersSize)
+	_, err = io.ReadFull(conn, winnersData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read winners data: %v", err)
+	}
+
+	return strings.Split(string(winnersData), "|"), nil
 }
