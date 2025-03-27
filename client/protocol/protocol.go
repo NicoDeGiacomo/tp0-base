@@ -1,6 +1,7 @@
 package protocol
 
 import (
+	"encoding/binary"
 	"fmt"
 	"github.com/7574-sistemas-distribuidos/docker-compose-init/client/domain"
 )
@@ -35,7 +36,11 @@ func BetsToBytes(bets []domain.Bet) ([]byte, error) {
 		bytes = append(bytes, betBytes...)
 	}
 
-	return bytes, nil
+	totalBytes := len(bytes)
+	sizePrefix := make([]byte, 2)
+	binary.BigEndian.PutUint16(sizePrefix, uint16(totalBytes))
+
+	return append(sizePrefix, bytes...), nil
 }
 
 func CalculateMaxBatchSize(configMaxBatchSize int) int {

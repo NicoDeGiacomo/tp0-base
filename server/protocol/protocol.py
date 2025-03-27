@@ -7,6 +7,41 @@ def read_bet(socket):
 
     data = __read_from_socket(socket, message_size).decode("utf-8")
 
+    return __read_bet_from_string(data)
+
+
+def read_bets_batch(socket):
+    l = __read_from_socket(socket, 2)
+    batch_size = (l[0] << 8) | l[1]
+
+    batch_data = __read_from_socket(socket, batch_size)
+
+    bets = []
+    index = 0
+    while index < batch_size:
+        bet_size = (batch_data[index] << 8) | batch_data[index + 1]
+        index += 2
+
+        bet_message = batch_data[index: index + bet_size].decode("utf-8")
+        index += bet_size
+
+        bets.append(__read_bet_from_string(bet_message))
+
+    return bets
+
+
+def __read_from_socket(skt, size):
+    data = b""
+    while len(data) < size:
+        n = skt.recv(size - len(data))
+        if not n:
+            raise ConnectionError("Cant read full message")
+        data += n
+
+    return data
+
+
+def __read_bet_from_string(data):
     fields = data.split("|")
     if len(fields) != 6:
         raise ValueError("Invalid bet received")
@@ -19,17 +54,6 @@ def read_bet(socket):
         birthdate=fields[4],
         number=fields[5],
     )
-
-
-def __read_from_socket(skt, size):
-    data = b""
-    while len(data) < size:
-        n = skt.recv(size - len(data))
-        if not n:
-            raise ConnectionError("Cant read full message")
-        data += n
-
-    return data
 
 
 def send_ack(conn, bet):

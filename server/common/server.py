@@ -3,7 +3,7 @@ import logging
 import signal
 
 from common.utils import store_bets
-from protocol.protocol import read_bet, send_ack
+from protocol.protocol import read_bet, send_ack, read_bets_batch
 
 
 class Server:
@@ -42,17 +42,18 @@ class Server:
         logging.info('action: handle_connection | result: in_progress')
 
         try:
-            bet = read_bet(self._client_socket)
-            logging.info(f'action: received_bet | result: success | bet: {bet}')
+            bets = read_bets_batch(self._client_socket)
+            bets_size = len(bets)
+            logging.info(f'action: received_bet | result: success | size: {bets_size}')
 
-            store_bets([bet])
-            logging.info(f'action: apuesta_almacenada | result: success | dni: {bet.document} | numero: {bet.number}')
+            store_bets(bets)
+            logging.info(f'action: apuesta_recibida | result: success | cantidad: {bets_size}')
 
-            send_ack(self._client_socket, bet)
-            logging.info(f'action: send_ack | result: success | numero: {bet.number}')
+            send_ack(self._client_socket, bets[-1])
+            logging.info(f'action: send_ack | result: success | numero: {bets[-1].number}')
 
         except OSError as e:
-            logging.error(f"action: receive_message | result: fail | error: {e}")
+            logging.error(f"action: apuesta_recibida | result: fail | error: {e}")
 
         finally:
             self._client_socket.close()

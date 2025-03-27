@@ -70,6 +70,7 @@ func (c *Client) StartClient() {
 	defer betsLoader.Close()
 
 	bets, err := betsLoader.NextChunk(size)
+	betsLen := len(bets)
 	if err != nil {
 		log.Errorf("action: load_bets | result: fail | error: %v", err)
 		return
@@ -93,7 +94,7 @@ func (c *Client) StartClient() {
 		return
 	}
 
-	err = readAck(c.conn, bets[len(bets)].Number)
+	err = readAck(c.conn, bets[betsLen-1].Number)
 	if err != nil {
 		log.Errorf("action: read_ack | result: fail | error: %v", err)
 		return
@@ -105,7 +106,7 @@ func (c *Client) StartClient() {
 		return
 	}
 
-	log.Infof("action: apuesta_enviada | result: success | cantidad: %d", len(bets))
+	log.Infof("action: apuesta_enviada | result: success | cantidad: %d", betsLen)
 
 	log.Infof("action: loop_finished | result: success")
 }
