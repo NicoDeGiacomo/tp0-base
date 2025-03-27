@@ -80,6 +80,7 @@ class Server:
                         winners.append(bet.document)
 
                 send_winners(self._client_socket, winners)
+                logging.info(f'action: send_winners | result: success | winners: {winners}')
 
         except OSError as e:
             logging.error(f"action: apuesta_recibida | result: fail | error: {e}")

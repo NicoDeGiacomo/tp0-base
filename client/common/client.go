@@ -153,7 +153,7 @@ func (c *Client) CheckForWinners() {
 			return
 		}
 
-		log.Infof("action: consulta_ganadores | result: success | cant_ganadores: %d", len(winners))
+		log.Infof("action: consulta_ganadores | result: success | cant_ganadores: %d | ganadores: %v", len(winners), winners)
 		return
 	}
 }

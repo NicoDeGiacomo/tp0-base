@@ -116,5 +116,9 @@ func ReadWinners(conn net.Conn) ([]string, error) {
 		return nil, fmt.Errorf("failed to read winners data: %v", err)
 	}
 
+	if len(winnersData) == 0 {
+		return []string{}, nil
+	}
+
 	return strings.Split(string(winnersData), "|"), nil
 }
