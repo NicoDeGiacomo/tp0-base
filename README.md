@@ -127,6 +127,7 @@ transmiten los clientes.
 #### Solución
 
 El protocolo de comunicación sufrió las siguientes modificaciones.
+
 - Al comienzo de un batch de mensajes se envía la cantidad total de bytes del batch.
 - Si esa cantidad es cero, significa que no hay más apuestas para enviar.
 - El ACK por cada batch corresponde al último número de apuesta del batch.
@@ -160,3 +161,14 @@ Si se considera un tamaño máximo de 8kB (8192 bytes) para el batch de mensajes
 #### Tests
 
 ![img.png](.assets/ej6-tests.png)
+
+### Ejercicio N.º 7:
+
+#### Solución
+
+La comunicación del final de carga por parte de los clientes ya fue implementada en el punto anterior. Para este punto,
+se modifica levemente el servidor para que entienda si finalizó la carga de todos los clientes.
+
+#### Tests
+
+...

@@ -7,11 +7,13 @@ from protocol.protocol import send_ack, read_bets_batch
 
 
 class Server:
-    def __init__(self, port, listen_backlog):
+    def __init__(self, port, listen_backlog, n_clients):
         self._port = port
         self._listen_backlog = listen_backlog
         self._client_socket = None
         self._running = False
+        self._n_clients = int(n_clients)
+        self._done_clients = set()
 
     def __enter__(self):
         signal.signal(signal.SIGTERM, self.__handle_signal_sigterm)
@@ -33,18 +35,23 @@ class Server:
     def run(self):
         self._running = True
         while self._running:
+            if len(self._done_clients) >= self._n_clients:
+                logging.info('action: all_clients_done | result: success')
+                break
             self._client_socket = self.__accept_new_connection()
             if self._client_socket:
-                self.__handle_client_connection()
+                ip = self._client_socket.getpeername()[0]
+                self.__handle_client_connection(ip)
         logging.info('action: stop_run | result: success')
 
-    def __handle_client_connection(self):
+    def __handle_client_connection(self, client_ip):
         logging.info('action: handle_connection | result: in_progress')
 
         try:
             bets = read_bets_batch(self._client_socket)
             bets_size = len(bets)
             if bets_size == 0:
+                self._done_clients.add(client_ip)
                 logging.info(f'action: no_more_batches | result: success')
                 return
             logging.info(f'action: batch_recibido | result: in_progress | cantidad: {bets_size}')
