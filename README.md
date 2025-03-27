@@ -121,3 +121,35 @@ transmiten los clientes.
 #### Tests
 
 ![img.png](.assets/ej5-tests.png)
+
+### Ejercicio N.º 6:
+
+#### Solución
+
+Estimación del Max Batch Size por defecto.
+
+Se cuenta con el siguiente formato de mensaje:
+
+```
+<largo mensaje><id agencia>|<nombre>|<apellido>|<documento>|<nacimiento>|<numero>
+```
+
+Estimemos un tamaño aproximado para cada campo.
+
+- `largo mensaje`: 2 bytes (valor fijo)
+- `id agencia`: 4 bytes (valor fijo)
+- `nombre`: 50 bytes
+- `apellido`: 50 bytes
+- `documento`: 4 bytes (valor fijo)
+- `nacimiento`: 10 bytes (valor fijo)
+- `numero`: 4 bytes (valor fijo)
+
+Por lo tanto, el tamaño total del mensaje es de 124 bytes, a lo que se suman 5 bytes de los delimitadores `|`. Dando un
+total de 129 bytes.
+
+Si se considera un tamaño máximo de 8kB (8192 bytes) para el batch de mensajes, se puede estimar el Max Batch Size como:
+`8192 bytes / 129 bytes = 63 mensajes (apuestas)`.
+
+#### Tests
+
+...

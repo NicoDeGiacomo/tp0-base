@@ -17,6 +17,7 @@ var log = logging.MustGetLogger("log")
 type ClientConfig struct {
 	ID            string
 	ServerAddress string
+	BatchSize     int
 }
 
 type Client struct {
@@ -59,6 +60,8 @@ func (c *Client) StartClient() {
 		return
 	}
 
+	size := protocol.CalculateMaxBatchSize(c.config.BatchSize)
+
 	betsLoader, err := NewBetsLoader(c.config.ID)
 	if err != nil {
 		log.Errorf("action: create_bets_loader | result: fail | error: %v", err)
@@ -66,7 +69,7 @@ func (c *Client) StartClient() {
 	}
 	defer betsLoader.Close()
 
-	bets, err := betsLoader.NextChunk(1)
+	bets, err := betsLoader.NextChunk(size)
 	if err != nil {
 		log.Errorf("action: load_bets | result: fail | error: %v", err)
 		return
