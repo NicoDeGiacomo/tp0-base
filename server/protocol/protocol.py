@@ -8,16 +8,16 @@ def read_bet(socket):
     data = __read_from_socket(socket, message_size).decode("utf-8")
 
     fields = data.split("|")
-    if len(fields) != 5:
+    if len(fields) != 6:
         raise ValueError("Invalid bet received")
 
     return Bet(
-        first_name=fields[0],
-        last_name=fields[1],
-        document=fields[2],
-        birthdate=fields[3],
-        number=fields[4],
-        agency="1",
+        agency=fields[0],
+        first_name=fields[1],
+        last_name=fields[2],
+        document=fields[3],
+        birthdate=fields[4],
+        number=fields[5],
     )
 
 

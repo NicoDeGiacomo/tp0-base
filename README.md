@@ -87,13 +87,36 @@ En el cliente, se realizan las siguientes modificaciones.
 
 ![img.png](.assets/ej4-tests.png)
 
-## Parte 1: Introducción a Docker
+## Parte 2: Repaso de Comunicaciones
 
-### Ejercicio N.º 1:
+### Ejercicio N.º 5:
 
 #### Solución
 
-...
+Se implementó la comunicación entre cliente y servidor para registrar apuestas.
+
+El protocolo de comunicación es el siguiente:
+
+1. El cliente envía un mensaje con el siguiente formato. Comienza con un número de 2 bytes que indica el largo del
+   mensaje y continúa con los valores de la apuesta separados por un delimitador `|`.
+    ```
+    <largo mensaje><id agencia>|<nombre>|<apellido>|<documento>|<nacimiento>|<numero>
+    ```
+2. El servidor parsea el mensaje, registra la apuesta y responde un ACK (un entero) con el número de la apuesta.
+    ```
+    <numero>
+    ```
+3. Luego, el cliente recibe el ACK y cierra la conexión.
+
+![img.png](.assets/ej5-protocol.png)
+
+Por el momento, no se cuenta con una política de retries, y cada cliente realiza un único intento de comunicación. Se
+entiende que una política de reintentos podría ser implementada en futuras iteraciones.
+
+Como extra, se modifica la plantilla del `docker compose` para que se autogeneren las diferentes apuestas que
+transmiten los clientes.
+
+![img.png](.assets/ej5-csv.png)
 
 #### Tests
 

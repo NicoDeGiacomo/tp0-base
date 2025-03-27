@@ -103,6 +103,7 @@ func main() {
 	}
 
 	bet := domain.Bet{
+		Agency:    v.GetInt("ID"),
 		Name:      v.GetString("NOMBRE"),
 		Surname:   v.GetString("APELLIDO"),
 		DocNumber: v.GetInt("DOCUMENTO"),

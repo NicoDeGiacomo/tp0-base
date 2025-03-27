@@ -6,7 +6,7 @@ import (
 )
 
 func BetToBytes(bet domain.Bet) ([]byte, error) {
-	message := fmt.Sprintf("%s|%s|%d|%s|%d", bet.Name, bet.Surname, bet.DocNumber, bet.BirthDate, bet.Number)
+	message := fmt.Sprintf("%d|%s|%s|%d|%s|%d", bet.Agency, bet.Name, bet.Surname, bet.DocNumber, bet.BirthDate, bet.Number)
 	if len(message) > 65535 {
 		return nil, fmt.Errorf("message too long")
 	}
