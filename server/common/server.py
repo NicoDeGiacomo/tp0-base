@@ -21,6 +21,8 @@ class Server:
         self._done_clients = self._manager.dict()
         self._agency_per_client = self._manager.dict()
 
+        self._processes = []
+
     def __enter__(self):
         signal.signal(signal.SIGTERM, self.__handle_signal_sigterm)
         self._server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -34,6 +36,10 @@ class Server:
             self._server_socket.shutdown(socket.SHUT_RDWR)
             self._server_socket.close()
             logging.info('action: shutdown_server_socket | result: success')
+        for process in self._processes:
+            if process.is_alive():
+                process.terminate()
+                process.join()
 
     def run(self):
         self._running = True
@@ -44,6 +50,7 @@ class Server:
                     target=self.__handle_client_connection, args=(client_socket,)
                 )
                 process.start()
+                self._processes.append(process)
         logging.info('action: stop_run | result: success')
 
     def __handle_client_connection(self, client_socket):
